@@ -54,7 +54,7 @@ The two skills cover different granularity:
 
 ## Why do we need it
 
-| Naive approach (anti-pattern) | This project |
+| Common approach (anti-pattern) | This project |
 |---|---|
 | Rules live only in developer heads or scattered comments | Codified, source-verified rule documents |
 | Sorting described as vague "priority" | Sorting broken into filter vs sort key vs post-filter/termination |
