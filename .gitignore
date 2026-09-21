@@ -1,0 +1,18 @@
+# —— macOS ——
+.DS_Store
+
+# —— Python ——
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# —— Eval / Skill-up 工作区（包外兜底排除） ——
+.skill-up-workspaces/
+.skillopt-workspaces/
+
+# —— IDE ——
+.idea/
+.vscode/
+*.swp

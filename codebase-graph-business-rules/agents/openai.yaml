@@ -1,0 +1,9 @@
+version: 1
+metadata:
+  key: "codebase-graph-business-rules"
+interface:
+  display_name: "全项目图谱化业务规则"
+  short_description: "先建 Graphify 图谱，再产出全项目可追溯业务规则与测试基线。"
+  default_prompt: "Use the codebase-graph-business-rules skill to build a code graph and produce source-traceable project business rules."
+policy:
+  allow_implicit_invocation: true

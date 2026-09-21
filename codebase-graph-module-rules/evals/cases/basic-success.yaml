@@ -1,0 +1,11 @@
+id: basic-success
+title: "模块图谱业务规则: 排序专项"
+input:
+  prompt: "请针对线索包和排序规则，先建 Graphify 图谱，再输出详细业务规则、流程图、来源和测试点。"
+expect:
+  must_contain: ["图谱", "排序", "来源", "测试"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["图谱", "排序", "测试"]

@@ -1,0 +1,9 @@
+version: 1
+metadata:
+  key: "codebase-graph-module-rules"
+interface:
+  display_name: "模块图谱化业务规则"
+  short_description: "按功能描述建图、查链路，生成模块规则、排序与测试专项。"
+  default_prompt: "Use the codebase-graph-module-rules skill to analyze a requested feature from code and produce detailed traceable rules."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,11 @@
+id: basic-success
+title: "全项目图谱业务规则: 完整请求"
+input:
+  prompt: "请扫描项目代码，先建 Graphify 图谱，再按模块输出业务规则、来源、流程图和测试范围。"
+expect:
+  must_contain: ["图谱", "业务规则", "来源", "测试范围"]
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["图谱", "业务规则", "测试范围"]
