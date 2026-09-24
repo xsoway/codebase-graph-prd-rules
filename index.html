@@ -1,196 +1,217 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="codebase-graph-prd-rules — Turn code into traceable business rules. Two source-verified AI-agent skills.">
-<title>codebase-graph-prd-rules</title>
+<title>codebase-graph-prd-rules — Turn code into traceable business rules</title>
+<meta name="description" content="Two source-verified AI-agent skills that turn project code into traceable business-rule documents — whole-project and single-module. Graphify-first, evidence-graded, evaluable.">
+<meta name="theme-color" content="#1d2021">
 <style>
   :root{
-    /* gruvbox-material 黑金 */
     --bg0:#1d2021; --bg1:#282828; --bg2:#32302f; --bg3:#3c3836;
-    --fg0:#d4be98; --fg1:#ddc7a1; --fg2:#a89984; --fg3:#7c6f64;
-    --gold:#d79921; --gold2:#d8a657; --gold3:#e3b341; --gold-dim:#8f6f1e;
-    --red:#ea6962; --green:#a9b665; --blue:#7daea3; --aqua:#89b482;
-    --border:#3c3836; --sel:#4a4038;
-    --mono:"SFMono-Regular","JetBrains Mono","Fira Code",Menlo,Consolas,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    --fg0:#e5d9c5; --fg1:#d4be98; --fg2:#928374; --fg3:#7c6f64;
+    --gold:#d8a657; --gold-bright:#e0af68; --gold-hi:#fabd2f;
+    --gold-dim:#a4834f; --good:#8ec07c; --line:rgba(216,166,87,.16);
+    --rad:8px; --mono:"SF Mono","JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --shadow:0 20px 60px -25px rgba(0,0,0,.65);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{
-    background:var(--bg0); color:var(--fg0);
-    font-family:var(--sans); line-height:1.7; font-size:16px;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:var(--gold2); text-decoration:none; border-bottom:1px dotted var(--gold-dim); transition:color .15s}
-  a:hover{color:var(--gold3); border-bottom-style:solid}
-  code{font-family:var(--mono); background:var(--bg2); color:var(--gold3); padding:.12em .4em; border-radius:4px; font-size:.88em}
-  pre{font-family:var(--mono); background:var(--bg1); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:6px; padding:1rem 1.1rem; overflow-x:auto; font-size:.86em; line-height:1.6; color:var(--fg1)}
-  pre code{background:none; padding:0; color:inherit}
-  .wrap{max-width:960px; margin:0 auto; padding:0 1.4rem}
-
-  /* 顶部导航 */
-  header{position:sticky; top:0; z-index:50; background:rgba(29,32,33,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border)}
-  .nav{display:flex; align-items:center; justify-content:space-between; height:60px}
-  .brand{font-family:var(--mono); font-weight:700; color:var(--gold); font-size:1.02rem; letter-spacing:.5px}
-  .brand .dot{color:var(--gold3)}
-  .nav-links{display:flex; gap:1.1rem; align-items:center; font-size:.9rem}
-  .nav-links a{border-bottom:none; color:var(--fg2)}
-  .nav-links a:hover{color:var(--gold3)}
-  .lang-toggle{
-    display:inline-flex; border:1px solid var(--border); border-radius:999px; overflow:hidden; font-family:var(--mono); font-size:.78rem;
-  }
-  .lang-toggle button{
-    background:transparent; border:none; color:var(--fg2); padding:.28rem .7rem; cursor:pointer; font-family:inherit;
-  }
-  .lang-toggle button.active{background:var(--gold); color:#1d2021; font-weight:700}
-
-  /* Hero */
-  .hero{padding:5.2rem 0 4rem; text-align:center; position:relative; overflow:hidden}
-  .hero::before{
-    content:""; position:absolute; inset:0; pointer-events:none; opacity:.55;
     background:
-      radial-gradient(1200px 400px at 50% -10%, rgba(215,153,33,.14), transparent 60%),
-      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(215,153,33,.05) 28px),
-      repeating-linear-gradient(90deg, transparent, transparent 54px, rgba(215,153,33,.03) 55px);
+      radial-gradient(1100px 520px at 50% -12%, rgba(216,166,87,.10), transparent 62%),
+      radial-gradient(900px 500px at 88% 12%, rgba(224,175,104,.06), transparent 55%),
+      var(--bg0);
+    color:var(--fg1);
+    font-family:var(--sans);
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
-  .hero .wrap{position:relative}
-  .hero-badge{display:inline-flex; gap:.5rem; flex-wrap:wrap; justify-content:center; margin-bottom:1.4rem}
-  .badge{font-family:var(--mono); font-size:.72rem; border:1px solid var(--border); border-radius:999px; padding:.22rem .7rem; color:var(--gold2); background:var(--bg1)}
-  .badge.b{color:var(--aqua)} .badge.g{color:var(--green)} .badge.r{color:var(--red)}
-  h1{font-family:var(--mono); font-size:clamp(1.9rem,5vw,3.1rem); font-weight:800; color:var(--gold); letter-spacing:-1px; line-height:1.15}
-  h1 .caret{color:var(--gold3); animation:blink 1.1s steps(1) infinite}
-  @keyframes blink{50%{opacity:0}}
-  .tagline{font-size:clamp(1.05rem,2.6vw,1.5rem); color:var(--fg1); margin-top:.9rem; font-weight:600; text-shadow:0 0 18px rgba(215,153,33,.25)}
-  .subline{font-family:var(--mono); color:var(--fg2); margin-top:.7rem; font-size:.92rem}
-  .hero-cta{margin-top:2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap}
-  .btn{font-family:var(--mono); padding:.62rem 1.4rem; border-radius:8px; font-size:.86rem; border:1px solid var(--gold-dim); color:var(--gold3); transition:.15s}
-  .btn.solid{background:var(--gold); color:#1d2021; font-weight:700; border-color:var(--gold)}
-  .btn.solid:hover{background:var(--gold3); transform:translateY(-1px)}
-  .btn.ghost:hover{background:var(--sel)}
-  .hero-arrow{font-family:var(--mono); color:var(--fg3); margin-top:2.6rem; animation:float 2.2s ease-in-out infinite}
-  @keyframes float{50%{transform:translateY(6px)}}
+  ::selection{background:rgba(216,166,87,.28);color:var(--fg0)}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{color:var(--gold-hi)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+  code{font-family:var(--mono);font-size:.86em;background:var(--bg2);border:1px solid var(--line);padding:.12em .42em;border-radius:5px;color:var(--gold-bright)}
+  pre{background:var(--bg1);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px;overflow:auto;box-shadow:var(--shadow)}
+  pre code{background:none;border:0;padding:0;color:var(--fg0);font-size:13px;line-height:1.55}
+  .mono{font-family:var(--mono)}
 
-  /* 分区通用 */
-  section{padding:3rem 0; border-top:1px solid var(--border)}
-  section>h2, .sechead{font-family:var(--mono); font-size:1.25rem; font-weight:700; color:var(--gold); margin-bottom:.4rem}
-  .sechead .hash{color:var(--gold-dim); margin-right:.5rem}
-  .seclead{color:var(--fg2); margin-bottom:1.6rem; font-size:.98rem}
+  /* ===== nav ===== */
+  nav{position:sticky;top:0;z-index:50;background:rgba(29,32,33,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--fg0);letter-spacing:.2px;white-space:nowrap}
+  .brand .dot{width:11px;height:11px;border-radius:3px;background:linear-gradient(135deg,var(--gold),var(--gold-hi));box-shadow:0 0 14px rgba(216,166,87,.55);flex:none}
+  .brand small{font-family:var(--mono);color:var(--fg2);font-weight:400;font-size:.72em}
+  .nav-links{display:flex;align-items:center;gap:26px}
+  .nav-links a{color:var(--fg2);font-size:.9rem;transition:color .18s}
+  .nav-links a:hover{color:var(--gold-bright)}
+  .lang-toggle{display:flex;align-items:center;background:var(--bg1);border:1px solid var(--line);border-radius:999px;padding:3px}
+  .lang-toggle button{background:none;border:0;color:var(--fg2);font-size:.78rem;font-weight:600;padding:5px 13px;border-radius:999px;cursor:pointer;transition:all .2s}
+  .lang-toggle button.active{background:linear-gradient(135deg,var(--gold),var(--gold-hi));color:#1d2021;box-shadow:0 2px 10px rgba(216,166,87,.4)}
 
-  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.1rem}
-  .card{background:var(--bg1); border:1px solid var(--border); border-radius:10px; padding:1.3rem 1.4rem; transition:.18s}
-  .card:hover{transform:translateY(-3px); border-color:var(--gold-dim); box-shadow:0 8px 26px rgba(0,0,0,.35)}
-  .card h3{font-family:var(--mono); font-size:1rem; color:var(--gold2); margin-bottom:.5rem}
-  .card h3 .k{color:var(--fg3)}
-  .card p{color:var(--fg0); font-size:.92rem}
-  .card .fmt{font-family:var(--mono); color:var(--green); font-size:.8rem; margin-top:.6rem; display:block}
+  /* ===== hero ===== */
+  header.hero{position:relative;padding:104px 0 88px;text-align:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);border:1px solid var(--line);background:var(--bg1);padding:7px 16px;border-radius:999px;margin-bottom:28px}
+  .eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 10px var(--good);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  h1{font-size:clamp(2.4rem,6.5vw,4.2rem);line-height:1.08;font-weight:800;color:var(--fg0);letter-spacing:-.02em}
+  h1 .gold{background:linear-gradient(100deg,var(--gold) 0%,var(--gold-hi) 55%,var(--gold-bright) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{max-width:660px;margin:24px auto 0;color:var(--fg2);font-size:1.13rem}
+  .hero-cta{display:flex;gap:14px;justify-content:center;margin-top:36px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 26px;border-radius:var(--rad);font-weight:600;font-size:.95rem;transition:all .2s;border:1px solid transparent}
+  .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-hi));color:#1d2021;box-shadow:0 10px 30px -10px rgba(216,166,87,.55)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -10px rgba(216,166,87,.7);color:#141617}
+  .btn-ghost{border-color:var(--line);color:var(--fg1);background:var(--bg1)}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold-bright);transform:translateY(-2px)}
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px;margin-top:68px;text-align:left}
+  .pillar{background:var(--bg1);border:1px solid var(--line);border-radius:12px;padding:22px 22px 20px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+  .pillar::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .25s}
+  .pillar:hover{transform:translateY(-4px);border-color:rgba(216,166,87,.4)}
+  .pillar:hover::before{opacity:1}
+  .pillar .k{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+  .pillar h3{color:var(--fg0);font-size:1.06rem;margin:10px 0 8px}
+  .pillar p{color:var(--fg2);font-size:.9rem}
 
-  .pillars{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:.8rem; margin-top:.4rem}
-  .pillar{border:1px solid var(--border); border-radius:8px; padding:.9rem 1rem; text-align:center; background:var(--bg2)}
-  .pillar .n{font-family:var(--mono); color:var(--gold); font-weight:700; font-size:1.05rem}
-  .pillar .t{font-size:.82rem; color:var(--fg2); margin-top:.2rem}
+  /* ===== sections ===== */
+  section{padding:76px 0;border-top:1px solid var(--line)}
+  .sec-head{max-width:680px;margin-bottom:42px}
+  .sec-head .tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+  .sec-head h2{font-size:clamp(1.7rem,4vw,2.4rem);color:var(--fg0);font-weight:800;letter-spacing:-.01em}
+  .sec-head p{color:var(--fg2);margin-top:12px}
 
-  table{width:100%; border-collapse:collapse; margin-top:.8rem; font-size:.9rem}
-  th,td{text-align:left; padding:.7rem .8rem; border-bottom:1px solid var(--border)}
-  th{font-family:var(--mono); color:var(--gold2); font-size:.78rem; letter-spacing:.5px; text-transform:uppercase; background:var(--bg2)}
-  tr:hover td{background:var(--bg2)}
+  .grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:start}
+  @media(max-width:840px){.grid2{grid-template-columns:1fr}}
 
-  ul.ticks{list-style:none; margin-top:.4rem}
-  ul.ticks li{padding:.28rem 0; padding-left:1.6rem; position:relative; font-size:.95rem}
-  ul.ticks li::before{content:"▸"; position:absolute; left:0; color:var(--gold); font-family:var(--mono)}
-  .fmt-note{font-family:var(--mono); color:var(--fg3); font-size:.8rem; margin-top:1.1rem}
+  .card{background:var(--bg1);border:1px solid var(--line);border-radius:12px;padding:26px;box-shadow:var(--shadow)}
+  .card h3{color:var(--fg0);font-size:1.1rem;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .card h3 .g{color:var(--gold);font-family:var(--mono);font-size:.8rem;letter-spacing:.1em}
+  .list{list-style:none}
+  .list li{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);color:var(--fg2);font-size:.94rem}
+  .list li:last-child{border-bottom:0}
+  .list li::before{content:"◆";color:var(--gold);font-size:.6rem;margin-top:.5em;opacity:.85}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+  .mini{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.76rem;color:var(--fg2);background:var(--bg2);border:1px solid var(--line);padding:6px 12px;border-radius:6px}
+  .mini .ok{color:var(--good)}
 
-  .faq details{margin-bottom:.7rem; border:1px solid var(--border); border-radius:8px; background:var(--bg1); overflow:hidden}
-  .faq summary{cursor:pointer; padding:.85rem 1.1rem; font-weight:600; color:var(--fg1); list-style:none; display:flex; justify-content:space-between; align-items:center}
-  .faq summary::after{content:"+"; font-family:var(--mono); color:var(--gold); font-size:1.1rem}
-  .faq details[open] summary::after{content:"–"}
-  .faq .a{padding:0 1.1rem 1rem; color:var(--fg0); font-size:.92rem}
+  .cmd-block{margin-top:16px}
+  .cmd-block .cm{font-family:var(--mono);font-size:12px;color:var(--fg2)}
+  .cmd-block .cm .$ {color:var(--gold-bright)}
+  .cmd-block pre{margin-top:8px}
 
-  footer{padding:2.6rem 0 3rem; border-top:1px solid var(--border); text-align:center; color:var(--fg3); font-size:.85rem}
-  footer .social{display:flex; gap:1.4rem; justify-content:center; margin-top:.8rem; flex-wrap:wrap}
-  footer .social a{font-family:var(--mono); font-size:.82rem; border-bottom:none; color:var(--fg2)}
-  footer .social a:hover{color:var(--gold3)}
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;counter-reset:step}
+  .step{background:var(--bg1);border:1px solid var(--line);border-radius:12px;padding:20px;position:relative;transition:transform .2s}
+  .step:hover{transform:translateY(-3px)}
+  .step::before{counter-increment:step;content:counter(step,decimal-leading-zero);font-family:var(--mono);font-size:.7rem;color:var(--gold);letter-spacing:.1em}
+  .step h4{color:var(--fg0);font-size:.98rem;margin:10px 0 6px}
+  .step p{color:var(--fg2);font-size:.86rem}
 
-  .backtop{position:fixed; right:1.2rem; bottom:1.2rem; width:42px;height:42px; border-radius:8px; background:var(--gold); color:#1d2021; font-family:var(--mono); font-weight:700; display:grid; place-items:center; opacity:0; pointer-events:none; transition:.2s}
-  .backtop.show{opacity:1; pointer-events:auto}
+  /* two-skill table */
+  .skill-table{width:100%;border-collapse:collapse;font-size:.92rem}
+  .skill-table th{font-family:var(--mono);font-size:.8rem;color:var(--gold);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .skill-table td{padding:12px 14px;border-bottom:1px dashed var(--line);color:var(--fg2);vertical-align:top}
+  .skill-table tr:last-child td{border-bottom:0}
+  .skill-table .dim{color:var(--fg0);font-weight:600;white-space:nowrap}
 
-  /* 语言隐藏 */
-  [data-lang]{display:none}
-  html[lang="zh"] [data-lang="zh"]{display:block}
-  html[lang="en"] [data-lang="en"]{display:block}
-  html[lang="zh"] [data-inline="zh"]{display:inline}
-  html[lang="en"] [data-inline="en"]{display:inline}
-  [data-inline]{display:none}
+  .cta-band{background:linear-gradient(135deg,rgba(216,166,87,.10),rgba(224,175,104,.04));border:1px solid var(--line);border-radius:16px;padding:52px;text-align:center;position:relative;overflow:hidden}
+  .cta-band::after{content:"";position:absolute;inset:auto -20% -70% -20%;height:60%;background:radial-gradient(closest-side,rgba(216,166,87,.16),transparent);pointer-events:none}
+  .cta-band h2{color:var(--fg0);font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:800}
+  .cta-band p{color:var(--fg2);max-width:560px;margin:16px auto 30px}
 
-  @media(max-width:640px){.hero{padding:3.6rem 0 2.6rem}.nav-links a.navhide{display:none}}
+  footer{border-top:1px solid var(--line);padding:40px 0 48px;color:var(--fg3);font-size:.86rem}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+  .foot .brand{color:var(--fg2);font-weight:600}
+  .foot-links{display:flex;gap:20px}
+  .foot-links a{color:var(--fg3)}
+  .foot-links a:hover{color:var(--gold)}
+
+  /* reveal on scroll */
+  .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .rv.in{opacity:1;transform:none}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+  @media(max-width:640px){.nav-links a.navhide{display:none}}
 </style>
 </head>
-<body lang-content>
-<a class="backtop" id="backtop" href="#top">↑</a>
-<header id="top">
-  <div class="wrap nav">
-    <div class="brand">codebase<span class="dot">-</span>graph-prd-rules<span class="dot">.▮</span></div>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><span class="dot"></span>codebase-graph-prd-rules<small>v1.0.0</small></a>
     <div class="nav-links">
-      <a class="navhide" href="#features" data-lang="zh">特性</a>
-      <a class="navhide" href="#features" data-lang="en">Features</a>
-      <a class="navhide" href="#skills" data-lang="zh">两个 Skill</a>
-      <a class="navhide" href="#skills" data-lang="en">Skills</a>
-      <a class="navhide" href="#install" data-lang="zh">安装</a>
-      <a class="navhide" href="#install" data-lang="en">Install</a>
-      <div class="lang-toggle">
-        <button type="button" id="btn-zh">中文</button>
-        <button type="button" id="btn-en">EN</button>
-      </div>
+      <a class="navhide" href="#about" data-i18n="nav.about">About</a>
+      <a class="navhide" href="#skills" data-i18n="nav.skills">Skills</a>
+      <a class="navhide" href="#install" data-i18n="nav.install">Install</a>
+      <a class="navhide" href="#flow" data-i18n="nav.flow">Flow</a>
+      <span class="lang-toggle" role="group" aria-label="Language / 语言">
+        <button data-langbtn="en" class="active">EN</button>
+        <button data-langbtn="zh">中文</button>
+      </span>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="eyebrow"><span class="pulse"></span><span data-i18n="hero.eyebrow">Two source-verified AI-agent skills</span></span>
+    <h1><span data-i18n="hero.h1a">Turn code into traceable</span><br><span class="gold" data-i18n="hero.h1b">business rules</span></h1>
+    <p class="sub" data-i18n="hero.sub">Graphify-first skills that turn a project — or one module — into detailed, source-confirmed business-rule documents non-developers can read, graded by evidence and backed by a 3-case eval contract.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="https://github.com/xsoway/codebase-graph-prd-rules" data-i18n="hero.cta1">View on GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/xsoway/codebase-graph-prd-rules/releases" data-i18n="hero.cta2">Releases &amp; assets</a>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><div class="k" data-i18n="pillar1.k">01 · Graphify-first</div><h3 data-i18n="pillar1.t">Graph guides, source confirms</h3><p data-i18n="pillar1.d">The graph locates entries and candidate chains; every rule is then confirmed against real source, SQL/XML and config.</p></div>
+      <div class="pillar"><div class="k" data-i18n="pillar2.k">02 · Source-verified</div><h3 data-i18n="pillar2.t">Evidence-graded output</h3><p data-i18n="pillar2.d">EXTRACTED vs INFERRED vs source-verified are reported separately, so static analysis never impersonates runtime behavior.</p></div>
+      <div class="pillar"><div class="k" data-i18n="pillar3.k">03 · Evaluable</div><h3 data-i18n="pillar3.t">3-case regression contract</h3><p data-i18n="pillar3.d">Each skill ships an evals/ contract — happy, missing-input, scope-boundary — with a bundled offline validator.</p></div>
+      <div class="pillar"><div class="k" data-i18n="pillar4.k">04 · Safely scoped</div><h3 data-i18n="pillar4.t">Analyze, never act</h3><p data-i18n="pillar4.d">Refuses to call real downstream services, send real leads, mutate data, or run production behavior without explicit authorization.</p></div>
     </div>
   </div>
 </header>
 
-<div class="hero">
+<section id="about">
   <div class="wrap">
-    <div class="hero-badge">
-      <span class="badge">v1.0.0</span>
-      <span class="badge b">MIT</span>
-      <span class="badge g">beta</span>
-      <span class="badge r">py3.9+</span>
-      <span class="badge">Graphify-first</span>
+    <div class="sec-head rv">
+      <div class="tag" data-i18n="about.tag">What it is</div>
+      <h2 data-i18n="about.h">A skill pair that ships like software</h2>
+      <p data-i18n="about.p">Each skill is a complete agent capability: an activation entry, a full execution spec, machine-readable discovery metadata, a pinned regression contract, and an executable safety validator. The repo also ships them as a pip-installable asset package with a Makefile governance entrypoint.</p>
     </div>
-    <h1><span data-lang="zh">把代码整理成可追溯的业务规则</span><span data-lang="en">Turn code into traceable business rules</span><span class="caret">▮</span></h1>
-    <p class="tagline"><span data-lang="zh">先建图谱 · 源码确认 · 非开发者可读 · 可评测</span><span data-lang="en">Graphify first · Source-verified · Non-developer readable · Evaluable</span></p>
-    <p class="subline">codebase-graph-business-rules <span class="dot">/</span> codebase-graph-module-rules</p>
-    <div class="hero-cta">
-      <a class="btn solid" href="https://github.com/xsoway/codebase-graph-prd-rules" target="_blank" rel="noopener">GitHub ↗</a>
-      <a class="btn ghost" href="#install" data-lang="zh">快速开始</a>
-      <a class="btn ghost" href="#install" data-lang="en">Quick Start</a>
-    </div>
-    <div class="hero-arrow">▼ ▼ ▼</div>
-  </div>
-</div>
-
-<section id="features">
-  <div class="wrap">
-    <h2 class="sechead"><span class="hash">##</span><span data-lang="zh">它解决什么</span><span data-lang="en">What it solves</span></h2>
-    <p class="seclead" data-lang="zh">两组互补的 AI 代理 Skill，把项目源码整理成供产品 / 运营 / QA 阅读的、可追溯的详细业务规则文档。</p>
     <div class="grid2">
-      <div class="card">
-        <h3><span class="k">$</span> <span data-lang="zh">图谱导航，源码确认</span><span data-lang="en">Graph navigates, source confirms</span></h3>
-        <p data-lang="zh">图谱定位入口与候选链路，每条规则再逐一用真实源码、SQL/XML 与配置确认。<span class="fmt">INFERRED 图谱边只是线索，不是事实</span></p>
-        <p data-lang="en">The graph locates entries and call chains; every rule is then confirmed against source, SQL/XML and config.<span class="fmt">An INFERRED edge is a lead, never a fact</span></p>
+      <div>
+        <pre><code>codebase-graph-prd-rules/
+├── codebase-graph-business-rules/  # whole-project skill
+│   ├── SKILL.md                    # activation entry
+│   ├── prompts/&lt;name&gt;.md           # full execution spec
+│   ├── agents/openai.yaml          # discovery metadata
+│   ├── references/                 # deep rules (lazy)
+│   ├── evals/eval.yaml + cases/    # 3-case regression
+│   ├── examples/                   # sample rule doc
+│   └── scripts/verify_skill_package.py
+├── codebase-graph-module-rules/    # single-module skill
+│   ├── SKILL.md · prompts/ · agents/
+│   ├── references/ · evals/ · examples/
+│   └── scripts/verify_skill_package.py
+├── Makefile                        # make check / code-clean
+├── scripts/check_secrets.py        # red-line scan
+├── pyproject.toml · setup.py       # uv build → sdist/wheel
+└── index.html                      # this page</code></pre>
       </div>
-      <div class="card">
-        <h3><span class="k">$</span> <span data-lang="zh">三层规则</span><span data-lang="en">Three-layer rules</span></h3>
-        <p data-lang="zh">资格过滤 → 候选排序 → 运行时控制，绝不混为一谈；排序写明字段、方向、null 规则与并列行为。</p>
-        <p data-lang="en">Qualification filter → candidate sorting → runtime control, never conflated; sorting states fields, direction, null rules, tie-breaks.</p>
-      </div>
-      <div class="card">
-        <h3><span class="k">$</span> <span data-lang="zh">只分析，不执行</span><span data-lang="en">Analyze, never act</span></h3>
-        <p data-lang="zh">除非用户显式授权，拒绝调用真实下游服务、发送真实线索、改动数据或运行生产行为。</p>
-        <p data-lang="en">Refuses to call real downstream services, send real leads, mutate data, or run production behavior without explicit authorization.</p>
-      </div>
-      <div class="card">
-        <h3><span class="k">$</span> <span data-lang="zh">证据等级</span><span data-lang="en">Evidence levels</span></h3>
-        <p data-lang="zh">EXTRACTED / INFERRED / 源码确认 分开报告，静态与运行行为清晰分离。</p>
-        <p data-lang="en">EXTRACTED vs INFERRED vs source-verified are reported separately; static vs runtime clearly distinguished.</p>
+      <div class="card rv">
+        <h3><span class="g">◆</span><span data-i18n="about.card.h">Why this exists</span></h3>
+        <ul class="list">
+          <li><span data-i18n="about.card.l1">Traceable — every rule carries a source location and an evidence level you can re-check.</span></li>
+          <li><span data-i18n="about.card.l2">Readable — output is written for product, operations and QA, not just engineers.</span></li>
+          <li><span data-i18n="about.card.l3">Evaluable — a static pass is never falsely reported as verified model behavior.</span></li>
+          <li><span data-i18n="about.card.l4">Two scales — one skill for a whole project, one for a single bounded module.</span></li>
+          <li><span data-i18n="about.card.l5">Safe — packages never ship real secrets, personal data, or absolute local paths.</span></li>
+        </ul>
+        <div class="badges">
+          <span class="mini"><span class="ok">●</span> MIT</span>
+          <span class="mini"><span class="ok">●</span> Python 3.9+</span>
+          <span class="mini"><span class="ok">●</span> stdlib only</span>
+          <span class="mini"><span class="ok">●</span> v1.0.0</span>
+        </div>
       </div>
     </div>
   </div>
@@ -198,108 +219,220 @@
 
 <section id="skills">
   <div class="wrap">
-    <h2 class="sechead"><span class="hash">##</span><span data-lang="zh">两个 Skill</span><span data-lang="en">The two skills</span></h2>
-    <p class="seclead" data-lang="zh">选择规则：一个明确边界的模块用 module-rules；无单模块边界的全项目扫描用 business-rules。</p>
-    <p class="seclead" data-lang="en">Choose: module-rules for one bounded module/feature; business-rules for a whole-project scan with no boundary.</p>
-    <table>
-      <thead><tr><th data-lang="zh">维度</th><th data-lang="en">Aspect</th><th>codebase-graph-business-rules</th><th>codebase-graph-module-rules</th></tr></thead>
-      <tbody>
-        <tr><td data-lang="zh">范围</td><td data-lang="en">Scope</td><td data-lang="zh">全项目</td><td data-lang="en">Whole project</td><td data-lang="zh">单个功能 / 模块</td><td data-lang="en">One feature / module</td></tr>
-        <tr><td data-lang="zh">输入</td><td data-lang="en">Input</td><td data-lang="zh">项目根 + 源码范围</td><td data-lang="en">Project root + source scope</td><td data-lang="zh">功能描述 / 模块名</td><td data-lang="en">Feature description / module name</td></tr>
-        <tr><td data-lang="zh">输出</td><td data-lang="en">Output</td><td data-lang="zh">全量集成文档：模块地图、实体/状态、链路、规则、测试范围、追溯索引</td><td data-lang="en">Full integration doc: module map, entity/state, flows, rules, test scope, traceability</td><td data-lang="zh">专项文档：边界、关系、规则/排序/限额、测试矩阵</td><td data-lang="en">Specialized doc: boundary, relationships, rules/sorting/limits, test matrix</td></tr>
-        <tr><td data-lang="zh">适用</td><td data-lang="en">Use when</td><td data-lang="zh">“梳理全项目 / PRD 基线”</td><td data-lang="en">whole-project / PRD baseline</td><td data-lang="zh">“梳理某个模块 / 某条规则”</td><td data-lang="en">one module / one rule</td></tr>
-      </tbody>
-    </table>
+    <div class="sec-head rv">
+      <div class="tag" data-i18n="skills.tag">The two skills</div>
+      <h2 data-i18n="skills.h">Whole project, or one module</h2>
+      <p data-i18n="skills.p">Pick a single clearly bounded module, or scan a whole project with no module boundary. Same evidence discipline, two scopes.</p>
+    </div>
+    <div class="card rv">
+      <table class="skill-table">
+        <thead><tr><th></th><th>codebase-graph-business-rules</th><th>codebase-graph-module-rules</th></tr></thead>
+        <tbody>
+          <tr><td class="dim" data-i18n="table.scope">Scope</td><td data-i18n="table.biz.scope">Whole project</td><td data-i18n="table.mod.scope">One feature / module</td></tr>
+          <tr><td class="dim" data-i18n="table.input">Input</td><td data-i18n="table.biz.input">Project root + source scope</td><td data-i18n="table.mod.input">Feature description / module name</td></tr>
+          <tr><td class="dim" data-i18n="table.output">Output</td><td data-i18n="table.biz.output">Full integration doc: module map, entity/state, flows, per-module rules, test scope, traceability index</td><td data-i18n="table.mod.output">Specialized module doc: boundary, relationships, rules/sorting/limits, test matrix</td></tr>
+          <tr><td class="dim" data-i18n="table.when">Use when</td><td data-i18n="table.biz.when">"梳理全项目 / PRD 基线"</td><td data-i18n="table.mod.when">"梳理某个模块 / 某条规则"</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
 <section id="install">
   <div class="wrap">
-    <h2 class="sechead"><span class="hash">##</span><span data-lang="zh">快速开始</span><span data-lang="en">Quick start</span></h2>
-    <p class="seclead" data-lang="zh">环境要求：Python 3.9+（校验器仅标准库，无第三方依赖）。</p>
-    <p class="seclead" data-lang="en">Requires Python 3.9+ for the validator (stdlib only, no third-party dependency).</p>
-
-    <p class="fmt-note" data-lang="zh"># 直接校验仓库内两个 Skill 包</p>
-    <p class="fmt-note" data-lang="en"># Validate both skill packages in the repo</p>
-<pre><code>python3 codebase-graph-business-rules/scripts/verify_skill_package.py codebase-graph-business-rules
+    <div class="sec-head rv">
+      <div class="tag" data-i18n="install.tag">Installable</div>
+      <h2 data-i18n="install.h">Validate and drive your skills from the terminal</h2>
+      <p data-i18n="install.p">Installable as a wheel from the release assets, or run the validators straight from the repo — offline, static, standard-library only.</p>
+    </div>
+    <div class="grid2">
+      <div class="card rv">
+        <h3><span class="g">❯</span><span data-i18n="install.c1.h">Install the wheel</span></h3>
+        <div class="cmd-block">
+          <div class="cm"><span class="mono $">$</span> <span class="mono">uv pip install codebase-graph-prd-rules</span></div>
+          <pre><code><span>verify-skill-package              # PASS: both skills</span>
+# install straight from the release:
+#   uv pip install "codebase-graph-prd-rules @ https://github.com/xsoway/codebase-graph-prd-rules/releases/latest/download/codebase_graph_prd_rules-1.0.0-py3-none-any.whl"</code></pre>
+        </div>
+      </div>
+      <div class="card rv">
+        <h3><span class="g">❯</span><span data-i18n="install.c2.h">Or run from the repo</span></h3>
+        <div class="cmd-block">
+          <div class="cm"><span class="mono $">$</span> <span class="mono">make check</span></div>
+          <pre><code><span>python3 codebase-graph-business-rules/scripts/verify_skill_package.py codebase-graph-business-rules
 # → skill package contract passed: 3 eval cases, prompt, metadata, references
-
 python3 codebase-graph-module-rules/scripts/verify_skill_package.py codebase-graph-module-rules
-# → skill package contract passed: 3 eval cases, prompt, metadata, references</code></pre>
-
-    <p class="fmt-note" data-lang="zh"># 或用发布包：安装 wheel 后获得两份完整技能 + 校验入口</p>
-    <p class="fmt-note" data-lang="en"># Or install the wheel to get both skills + a validation entrypoint</p>
-<pre><code>uv pip install "codebase-graph-prd-rules @ https://github.com/xsoway/codebase-graph-prd-rules/releases/latest/download/codebase_graph_prd_rules-1.0.0-py3-none-any.whl"
-verify-skill-package</code></pre>
-
-    <p class="fmt-note" data-lang="zh"># 监管入口：make check / make code-clean</p>
-    <p class="fmt-note" data-lang="en"># Governance entrypoint: make check / make code-clean</p>
-<pre><code>make check       <span class="dot"># 结构校验 + 敏感信息扫描</span>
-make code-clean  <span class="dot"># 清理 + 校验 + uv build 产物</span></code></pre>
+make code-clean   # clean + verify + build dist</span></code></pre>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="faq">
+<section id="flow">
   <div class="wrap">
-    <h2 class="sechead"><span class="hash">##</span><span data-lang="zh">常见问题</span><span data-lang="en">FAQ</span></h2>
-    <details>
-      <summary data-lang="zh">该用哪个 Skill？</summary><summary data-lang="en">Which skill should I use?</summary>
-      <div class="a" data-lang="zh">一个边界明确的模块用 <code>codebase-graph-module-rules</code>；无单模块边界的全项目扫描用 <code>codebase-graph-business-rules</code>。</div>
-      <div class="a" data-lang="en">Use <code>codebase-graph-module-rules</code> for one bounded module/feature; <code>codebase-graph-business-rules</code> for a whole-project scan.</div>
-    </details>
-    <details>
-      <summary data-lang="zh">需要 LLM 凭据吗？</summary><summary data-lang="en">Do I need an LLM credential?</summary>
-      <div class="a" data-lang="zh">不需要。语义提取仅在显式提供凭据时执行；无凭据时退化为结构图谱 + 源码复核。</div>
-      <div class="a" data-lang="en">No. Semantic extraction runs only when you explicitly provide a credential; otherwise it falls back to structural graph + source review.</div>
-    </details>
-    <details>
-      <summary data-lang="zh">这些 Skill 会改我的代码吗？</summary><summary data-lang="en">Do these skills modify my code?</summary>
-      <div class="a" data-lang="zh">不会。两者只分析和写文档；改动业务代码、数据或外部系统需另行显式授权。</div>
-      <div class="a" data-lang="en">No. Both analyze and write documents only; changing code/data/external systems requires separate explicit authorization.</div>
-    </details>
-    <details>
-      <summary data-lang="zh">能把规则导出 CSV/JSON 吗？</summary><summary data-lang="en">Can I export rules to CSV/JSON?</summary>
-      <div class="a" data-lang="zh">可以，明确要求时在 Markdown 主稿之外附加导出。</div>
-      <div class="a" data-lang="en">Yes, on explicit request, in addition to the Markdown primary deliverable.</div>
-    </details>
+    <div class="sec-head rv">
+      <div class="tag" data-i18n="flow.tag">Workflow</div>
+      <h2 data-i18n="flow.h">Map, extract, confirm, document</h2>
+      <p data-i18n="flow.p">The graph finds the shape; every rule is then re-checked against source and written for non-developer readers, with an evidence level on each claim.</p>
+    </div>
+    <div class="flow rv">
+      <div class="step"><h4 data-i18n="flow1.t">Map</h4><p data-i18n="flow1.d">Build the project graph first (Graphify). INFERRED edges are leads, never facts.</p></div>
+      <div class="step"><h4 data-i18n="flow2.t">Extract</h4><p data-i18n="flow2.d">Track entries and call chains; pull qualification, sorting and runtime-control rules.</p></div>
+      <div class="step"><h4 data-i18n="flow3.t">Confirm</h4><p data-i18n="flow3.d">Grade each rule EXTRACTED / INFERRED / source-verified against real code, SQL/XML and config.</p></div>
+      <div class="step"><h4 data-i18n="flow4.t">Document</h4><p data-i18n="flow4.d">Write a Markdown rule doc under docs/ with flows and test scope; add CSV/JSON ledgers on request.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-band rv">
+      <h2 data-i18n="cta.h">Turn your code into rules people can act on</h2>
+      <p data-i18n="cta.p">Read the bilingual README, grab the release artifacts, or ask a question in Discussions.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://github.com/xsoway/codebase-graph-prd-rules/blob/main/README.md" data-i18n="cta.b1">Read the README</a>
+        <a class="btn btn-ghost" href="https://github.com/xsoway/codebase-graph-prd-rules/discussions" data-i18n="cta.b2">Ask a question</a>
+      </div>
+    </div>
   </div>
 </section>
 
 <footer>
-  <div class="wrap">
-    <p><span data-lang="zh">MIT License · © 2026 xulanzhong</span><span data-lang="en">MIT License · © 2026 xulanzhong</span></p>
-    <div class="social">
-      <a href="https://github.com/xsoway/codebase-graph-prd-rules" target="_blank" rel="noopener">[ github ]</a>
-      <a href="https://github.com/xsoway/codebase-graph-prd-rules/discussions" target="_blank" rel="noopener">[ discussions ]</a>
-      <a href="https://github.com/xsoway/codebase-graph-prd-rules/blob/main/README.md" target="_blank" rel="noopener">[ readme ]</a>
-      <a href="https://github.com/xsoway/codebase-graph-prd-rules/blob/main/README.zh-CN.md" target="_blank" rel="noopener">[ 中文 README ]</a>
+  <div class="wrap foot">
+    <span class="brand"><span class="dot"></span>codebase-graph-prd-rules</span>
+    <div class="foot-links">
+      <a href="https://github.com/xsoway/codebase-graph-prd-rules" data-i18n="foot.gh">GitHub</a>
+      <a href="https://github.com/xsoway/codebase-graph-prd-rules/releases" data-i18n="foot.rel">Releases</a>
+      <a href="https://github.com/xsoway/codebase-graph-prd-rules/discussions" data-i18n="foot.disc">Discussions</a>
+      <a href="https://github.com/xsoway/codebase-graph-prd-rules/blob/main/LICENSE" data-i18n="foot.lic">MIT License</a>
     </div>
+    <span data-i18n="foot.made">© 2026 xulanzhong</span>
   </div>
 </footer>
 
 <script>
-(function(){
-  const root=document.documentElement;
-  const saved=localStorage.getItem('crg-lang');
-  const initial=(saved==='en'||saved==='zh')?saved:'zh';
-  const zhBtn=document.getElementById('btn-zh'),enBtn=document.getElementById('btn-en');
-  function setLang(lang){
-    root.lang=lang;
-    localStorage.setItem('crg-lang',lang);
-    zhBtn.classList.toggle('active',lang==='zh');
-    enBtn.classList.toggle('active',lang==='en');
-    document.title=(lang==='zh')
-      ? 'codebase-graph-prd-rules — 把代码整理成可追溯的业务规则'
-      : 'codebase-graph-prd-rules — Turn code into traceable business rules';
+/* ---------- i18n ---------- */
+const I18N = {
+  en: {
+    "lang.en":"EN","lang.zh":"中文",
+    "nav.about":"About","nav.skills":"Skills","nav.install":"Install","nav.flow":"Flow",
+    "hero.eyebrow":"Two source-verified AI-agent skills",
+    "hero.h1a":"Turn code into traceable","hero.h1b":"business rules",
+    "hero.sub":"Graphify-first skills that turn a project — or one module — into detailed, source-confirmed business-rule documents non-developers can read, graded by evidence and backed by a 3-case eval contract.",
+    "hero.cta1":"View on GitHub","hero.cta2":"Releases & assets",
+    "pillar1.k":"01 · Graphify-first","pillar1.t":"Graph guides, source confirms","pillar1.d":"The graph locates entries and candidate chains; every rule is then confirmed against real source, SQL/XML and config.",
+    "pillar2.k":"02 · Source-verified","pillar2.t":"Evidence-graded output","pillar2.d":"EXTRACTED vs INFERRED vs source-verified are reported separately, so static analysis never impersonates runtime behavior.",
+    "pillar3.k":"03 · Evaluable","pillar3.t":"3-case regression contract","pillar3.d":"Each skill ships an evals/ contract — happy, missing-input, scope-boundary — with a bundled offline validator.",
+    "pillar4.k":"04 · Safely scoped","pillar4.t":"Analyze, never act","pillar4.d":"Refuses to call real downstream services, send real leads, mutate data, or run production behavior without explicit authorization.",
+    "about.tag":"What it is","about.h":"A skill pair that ships like software",
+    "about.p":"Each skill is a complete agent capability: an activation entry, a full execution spec, machine-readable discovery metadata, a pinned regression contract, and an executable safety validator. The repo also ships them as a pip-installable asset package with a Makefile governance entrypoint.",
+    "about.card.h":"Why this exists",
+    "about.card.l1":"Traceable — every rule carries a source location and an evidence level you can re-check.",
+    "about.card.l2":"Readable — output is written for product, operations and QA, not just engineers.",
+    "about.card.l3":"Evaluable — a static pass is never falsely reported as verified model behavior.",
+    "about.card.l4":"Two scales — one skill for a whole project, one for a single bounded module.",
+    "about.card.l5":"Safe — packages never ship real secrets, personal data, or absolute local paths.",
+    "skills.tag":"The two skills","skills.h":"Whole project, or one module",
+    "skills.p":"Pick a single clearly bounded module, or scan a whole project with no module boundary. Same evidence discipline, two scopes.",
+    "table.scope":"Scope","table.input":"Input","table.output":"Output","table.when":"Use when",
+    "table.biz.scope":"Whole project","table.biz.input":"Project root + source scope","table.biz.output":"Full integration doc: module map, entity/state, flows, per-module rules, test scope, traceability index","table.biz.when":"\"梳理全项目 / PRD 基线\"",
+    "table.mod.scope":"One feature / module","table.mod.input":"Feature description / module name","table.mod.output":"Specialized module doc: boundary, relationships, rules/sorting/limits, test matrix","table.mod.when":"\"梳理某个模块 / 某条规则\"",
+    "install.tag":"Installable","install.h":"Validate and drive your skills from the terminal",
+    "install.p":"Installable as a wheel from the release assets, or run the validators straight from the repo — offline, static, standard-library only.",
+    "install.c1.h":"Install the wheel","install.c2.h":"Or run from the repo",
+    "flow.tag":"Workflow","flow.h":"Map, extract, confirm, document",
+    "flow.p":"The graph finds the shape; every rule is then re-checked against source and written for non-developer readers, with an evidence level on each claim.",
+    "flow1.t":"Map","flow1.d":"Build the project graph first (Graphify). INFERRED edges are leads, never facts.",
+    "flow2.t":"Extract","flow2.d":"Track entries and call chains; pull qualification, sorting and runtime-control rules.",
+    "flow3.t":"Confirm","flow3.d":"Grade each rule EXTRACTED / INFERRED / source-verified against real code, SQL/XML and config.",
+    "flow4.t":"Document","flow4.d":"Write a Markdown rule doc under docs/ with flows and test scope; add CSV/JSON ledgers on request.",
+    "cta.h":"Turn your code into rules people can act on",
+    "cta.p":"Read the bilingual README, grab the release artifacts, or ask a question in Discussions.",
+    "cta.b1":"Read the README","cta.b2":"Ask a question",
+    "foot.gh":"GitHub","foot.rel":"Releases","foot.disc":"Discussions","foot.lic":"MIT License","foot.made":"© 2026 xulanzhong"
+  },
+  zh: {
+    "lang.en":"EN","lang.zh":"中文",
+    "nav.about":"关于","nav.skills":"两个 Skill","nav.install":"安装","nav.flow":"工作流",
+    "hero.eyebrow":"两个源码确认的 AI 代理 Skill",
+    "hero.h1a":"把代码整理成可追溯的","hero.h1b":"业务规则",
+    "hero.sub":"图谱优先的两个 Skill：把整个项目——或单个模块——整理成非开发者也能读的、逐条源码确认的详细业务规则文档，按证据分级，并带 3 例回归契约。",
+    "hero.cta1":"查看 GitHub","hero.cta2":"发行版与产物",
+    "pillar1.k":"01 · 图谱优先","pillar1.t":"图谱导航，源码确认","pillar1.d":"图谱定位入口与候选链路，每条规则再逐一用真实源码、SQL/XML 与配置确认。",
+    "pillar2.k":"02 · 源码确认","pillar2.t":"证据分级的输出","pillar2.d":"EXTRACTED / INFERRED / 源码确认 分开报告，静态分析绝不冒充运行行为。",
+    "pillar3.k":"03 · 可评测","pillar3.t":"3 例回归契约","pillar3.d":"每个 Skill 自带 evals/ 契约——成功、缺输入、边界——并附可离线运行的校验器。",
+    "pillar4.k":"04 · 安全边界","pillar4.t":"只分析，不执行","pillar4.d":"除非显式授权，拒绝调用真实下游服务、发送真实线索、改动数据或运行生产行为。",
+    "about.tag":"它是什么","about.h":"像软件一样交付的一对 Skill",
+    "about.p":"每个 Skill 都是完整的代理能力：激活入口、完整执行规格、机器可读发现元数据、固定回归契约，以及可执行的安全校验器。仓库还以可 pip 安装的资产包发货，并提供 Makefile 监管入口。",
+    "about.card.h":"为什么需要它",
+    "about.card.l1":"可追溯——每条规则都带源码位置与可复核的证据等级。",
+    "about.card.l2":"可读——输出写给产品 / 运营 / QA，不只是工程师。",
+    "about.card.l3":"可评测——静态通过绝不冒充‘已验证的模型行为’。",
+    "about.card.l4":"两种尺度——一个 Skill 管全项目，一个管单一模块。",
+    "about.card.l5":"安全——包绝不携带真实密钥、个人数据或绝对本机路径。",
+    "skills.tag":"两个 Skill","skills.h":"全项目，或单个模块",
+    "skills.p":"选一个边界明确的模块，或做无模块边界的全项目扫描。同一套证据纪律，两种尺度。",
+    "table.scope":"范围","table.input":"输入","table.output":"输出","table.when":"适用",
+    "table.biz.scope":"全项目","table.biz.input":"项目根 + 源码范围","table.biz.output":"全量集成文档：模块地图、实体/状态、链路、逐模块规则、测试范围、追溯索引","table.biz.when":"“梳理全项目 / PRD 基线”",
+    "table.mod.scope":"单个功能 / 模块","table.mod.input":"功能描述 / 模块名","table.mod.output":"专项模块文档：边界、关系、规则/排序/限额、测试矩阵","table.mod.when":"“梳理某个模块 / 某条规则”",
+    "install.tag":"可安装","install.h":"在终端校验并驱动你的 Skill",
+    "install.p":"可从发行产物以 wheel 方式安装，或直接在仓库运行校验器——离线、静态、仅标准库。",
+    "install.c1.h":"安装 wheel","install.c2.h":"或从仓库运行",
+    "flow.tag":"工作流","flow.h":"建图、提取、确认、成文",
+    "flow.p":"图谱先画出形状；随后每条规则都对照源码复核，并为非开发者读者落笔，每条断言都带证据等级。",
+    "flow1.t":"建图","flow1.d":"先用 Graphify 建项目图谱。INFERRED 边只是线索，不是事实。",
+    "flow2.t":"提取","flow2.d":"追踪入口与调用链，抽取资格过滤、排序与运行时控制规则。",
+    "flow3.t":"确认","flow3.d":"把每条规则标注为 EXTRACTED / INFERRED / 源码确认，对照真实代码、SQL/XML 与配置。",
+    "flow4.t":"成文","flow4.d":"在 docs/ 下写出含流程图与测试范围的 Markdown 规则文档；按需额外导出 CSV/JSON。",
+    "cta.h":"把代码变成可执行落地的规则",
+    "cta.p":"阅读中英 README，获取发行产物，或在 Discussions 提问。",
+    "cta.b1":"阅读 README","cta.b2":"提问",
+    "foot.gh":"GitHub","foot.rel":"发行版","foot.disc":"讨论","foot.lic":"MIT 协议","foot.made":"© 2026 xulanzhong"
   }
-  zhBtn.addEventListener('click',()=>setLang('zh'));
-  enBtn.addEventListener('click',()=>setLang('en'));
-  setLang(initial);
+};
 
-  // back-to-top
-  const bt=document.getElementById('backtop');
-  window.addEventListener('scroll',()=>bt.classList.toggle('show',window.scrollY>500));
-})();
+/* ---------- language engine ---------- */
+function applyLang(lang){
+  const d = I18N[lang] || I18N.en;
+  document.documentElement.setAttribute("lang", lang);
+  document.documentElement.setAttribute("data-lang", lang);
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (d[key] != null) el.textContent = d[key];
+  });
+  document.querySelectorAll("[data-langbtn]").forEach(b => {
+    b.classList.toggle("active", b.getAttribute("data-langbtn") === lang);
+  });
+}
+function getLang(){
+  const url = new URLSearchParams(location.search).get("lang");
+  if (url === "zh" || url === "en") return url;
+  const stored = localStorage.getItem("crg-lang");
+  if (stored === "zh" || stored === "en") return stored;
+  return "en";
+}
+
+/* ---------- init ---------- */
+let lang = getLang();
+applyLang(lang);
+
+document.querySelectorAll("[data-langbtn]").forEach(b => {
+  b.addEventListener("click", () => {
+    lang = b.getAttribute("data-langbtn");
+    localStorage.setItem("crg-lang", lang);
+    const url = new URL(location);
+    url.searchParams.set("lang", lang);
+    history.replaceState({}, "", url);
+    applyLang(lang);
+  });
+});
+
+/* ---------- scroll reveal ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll(".rv").forEach(el => io.observe(el));
 </script>
 </body>
 </html>
