@@ -1,0 +1,6 @@
+# sdist 含根部技能目录与构建配置，使 `uv build` 生成的 sdist 可在干净环境重建 wheel。
+recursive-include codebase-graph-business-rules *
+recursive-include codebase-graph-module-rules *
+include README.md README.zh-CN.md LICENSE pyproject.toml setup.py
+recursive-include src *
+global-exclude __pycache__ *.py[cod]

@@ -114,6 +114,15 @@ codebase-graph-prd-rules/
 ├── LICENSE                          # MIT
 ├── .gitignore                       # 排除 macOS/Python/IDE 产物
 ├── .gitattributes                   # * text=auto eol=lf
+├── index.html                       # gruvbox-material 黑金项目主页（中英）
+├── pyproject.toml                   # 发布资产包元数据（uv build → sdist/wheel）
+├── setup.py                         # 构建期把两个 Skill 目录复制进包内 skills/
+├── MANIFEST.in                      # sdist 资产清单
+├── Makefile                         # 监管入口：make check / make code-clean
+├── scripts/check_secrets.py         # 发布红线扫描（敏感信息/绝对路径）
+├── src/codebase_graph_prd_rules/    # 资产包 Python 源码（已构建进 wheel）
+│   ├── __init__.py                  # __version__ / skills_dir() / available_skills()
+│   └── verify_skill_package.py      # verify-skill-package 控制台入口
 ├── codebase-graph-business-rules/   # 全项目业务规则 Skill
 │   ├── SKILL.md                     # 激活入口
 │   ├── prompts/codebase-graph-business-rules.md

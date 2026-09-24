@@ -50,10 +50,10 @@
 
 ## 未执行的发布动作
 
-用户显式要求发布到 GitHub 后，运行：
+用户显式要求发布到 GitHub 后，运行（`<repo-root>` 为仓库本地路径）：
 
 ```bash
-cd /Users/xulanzhong/Desktop/my-ai-workspace/code_project/src/github-repos/codebase-graph-prd-rules
+cd <repo-root>/codebase-graph-prd-rules
 gh repo create <owner>/codebase-graph-prd-rules --public --source=. --push
 ```
 

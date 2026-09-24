@@ -1,0 +1,40 @@
+[project]
+name = "codebase-graph-prd-rules"
+version = "1.0.0"
+description = "Two source-verified AI-agent skills that turn project code into traceable business-rule documents (whole-project and single-module)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "xulanzhong", email = "xulanzhong521@gmail.com" }]
+keywords = ["skill", "ai", "llm", "code-graph", "business-rules", "graphify", "agent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Documentation",
+]
+
+# 纯资产/数据包：无第三方运行依赖，仅标准库校验脚本。
+dependencies = []
+
+[project.scripts]
+verify-skill-package = "codebase_graph_prd_rules.verify_skill_package:main"
+
+[project.urls]
+Homepage = "https://github.com/xsoway/codebase-graph-prd-rules"
+Repository = "https://github.com/xsoway/codebase-graph-prd-rules"
+"中文说明" = "https://github.com/xsoway/codebase-graph-prd-rules/blob/main/README.zh-CN.md"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"codebase_graph_prd_rules" = ["skills/*/*", "skills/*/*/*", "skills/*/*/*/*", "skills/*/*/*/*/*", "skills/*/*/*/*/*/*", "*.md"]
